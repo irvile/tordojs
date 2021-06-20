@@ -50,3 +50,31 @@ export interface TordoCollectionStatic {
 
   down()
 }
+
+export interface FaunaCollection {
+  id: string
+}
+
+export interface FaunaCollectionData {
+  data: Array<FaunaCollection>
+}
+
+export interface FaunaIndexTermValue {
+  field: string[]
+}
+
+export interface FaunaIndex {
+  ref: any
+  active: boolean
+  serialized: boolean
+  name: string
+  source: FaunaCollection
+  unique: boolean
+  terms?: Array<FaunaIndexTermValue>
+  values?: Array<FaunaIndexTermValue>
+  partitions: number
+}
+
+export interface FaunaIndexData {
+  data: Array<FaunaIndex>
+}

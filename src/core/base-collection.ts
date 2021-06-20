@@ -55,13 +55,15 @@ export class BaseCollection {
   static getIndexesMap() {
     const indexesMap = new Map<string, IndexOptions>()
 
-    Object.entries(this.indexes).map(index => {
-      const fieldName = index[0] as string
-      const indexName = index[1] as string
+    if (this.indexes !== undefined && Object.keys(this.indexes).length > 0) {
+      Object.entries(this.indexes).map(index => {
+        const fieldName = index[0] as string
+        const indexName = index[1] as string
 
-      indexesMap.set(indexName, { isUnique: false, terms: [fieldName], values: [] })
-      return index
-    })
+        indexesMap.set(indexName, { isUnique: false, terms: [fieldName], values: [] })
+        return index
+      })
+    }
 
     // create index for find all documents
     indexesMap.set(this.getCollectionName() + '_all', {
@@ -71,7 +73,7 @@ export class BaseCollection {
     })
 
     // create index for contrainst unique fields
-    if (this.uniqueFields.length > 0) {
+    if (this.uniqueFields?.length > 0) {
       indexesMap.set(this.getCollectionName() + '_unique', {
         isUnique: true,
         terms: this.uniqueFields,
@@ -110,6 +112,7 @@ export class BaseCollection {
 
   static async up() {
     await createCollection(this.getCollectionName())
+
     for (var [indexName, indexOptions] of this.getIndexesMap().entries()) {
       await createIndex(
         this.getCollectionName(),
@@ -159,7 +162,7 @@ export class BaseCollection {
       )
       return docs
     } catch (error) {
-      console.log(error)
+      console.log('error', error)
     }
   }
 
