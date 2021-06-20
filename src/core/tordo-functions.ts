@@ -1,7 +1,7 @@
 import { FaunaManager } from '../fauna/fauna-manager'
 import { getFromContainer } from '../container'
 import { q, ExprVal, faunadb } from '../fauna'
-import { FaunaIndex, FaunaIndexData } from '../types'
+import { FaunaCollectionData, FaunaIndex, FaunaIndexData } from '../types'
 
 const {
   Do,
@@ -16,6 +16,7 @@ const {
   Get,
   Var,
   Indexes,
+  Collections,
   CreateDatabase,
   CreateCollection,
   CreateKey,
@@ -33,19 +34,22 @@ export function createFaunaClient(optionsOrName?: any) {
   return getFaunaManager().create(optionsOrName)
 }
 
-export async function createTestConnection(specName: string): Promise<any> {
+export async function createTestDatabase(specName: string): Promise<any> {
   const faunaClient = getFaunaManager().create('secret')
+
   const database: any = await faunaClient.query(
     Do(
       If(Exists(Database(specName)), Delete(Database(specName)), false),
       CreateDatabase({ name: specName })
     )
   )
+
   const adminKey: any = await faunaClient.query(
     CreateKey({ database: database.ref, role: 'admin' })
   )
-  const testConnection = getFaunaManager().create(adminKey.secret)
-  return testConnection
+
+  createFaunaClient(adminKey.secret)
+  return adminKey.secret
 }
 
 export async function deleteAllDocuments() {
@@ -144,4 +148,10 @@ export const listIndexes = async (): Promise<FaunaIndex[]> => {
     faunadb.query.Map(Paginate(Indexes()), Lambda('index', Get(Var('index'))))
   )
   return indexes.data
+}
+
+export const listCollections = async (): Promise<Array<string>> => {
+  const faunaClient = getFaunaClient()
+  const collections: FaunaCollectionData = await faunaClient.query(Paginate(Collections()))
+  return collections.data.map(collectionRef => collectionRef.id)
 }

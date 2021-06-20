@@ -1,10 +1,10 @@
-import { BaseCollection, createTestConnection, getFaunaClient } from '../../src'
+import { BaseCollection, createTestDatabase, getFaunaClient } from '../../src'
 import { Migrator } from '../../src/migrator'
 import { q } from '../../src/fauna'
 
 describe('Migration Test', () => {
   beforeAll(async () => {
-    await createTestConnection('migration-test')
+    await createTestDatabase('migration-test')
   })
 
   it('should run collection up function', async () => {

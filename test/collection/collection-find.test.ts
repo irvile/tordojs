@@ -13,7 +13,7 @@ describe('Collection Find Test', () => {
   const userData = { name: 'fake name', email: 'user@email.com' }
 
   beforeAll(async () => {
-    await db.createTestConnection('collection-find-spec')
+    await db.createTestDatabase('collection-find-spec')
     await User.up()
     await User.create(userData)
   })
