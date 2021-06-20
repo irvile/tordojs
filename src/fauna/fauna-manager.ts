@@ -14,13 +14,20 @@ export class FaunaManager {
   create(faunaSecret?: string) {
     const secret = faunaSecret || process.env.FAUNADB_KEY
 
-    const config: any = {
+    let config: any = {
       secret: secret,
-      scheme: 'http',
-      domain: 'localhost',
-      port: 8443,
+      domain: 'db.fauna.com',
+      scheme: 'https',
     }
 
+    if (process.env['NODE_ENV'] !== undefined && process.env['NODE_ENV'] !== 'production') {
+      config = {
+        secret: secret,
+        scheme: 'http',
+        domain: 'localhost',
+        port: 8443,
+      }
+    }
     this.faunaClient = new faunadb.Client(config)
     return this.faunaClient
   }
