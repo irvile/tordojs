@@ -12,6 +12,11 @@
     "dist",
     "src"
   ],
+  "keywords": [
+    "Fauna",
+    "serverless",
+    "database"
+  ],
   "engines": {
     "node": ">=10"
   },
