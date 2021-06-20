@@ -1,6 +1,7 @@
 import { FaunaManager } from '../fauna/fauna-manager'
 import { getFromContainer } from '../container'
-import { q, ExprVal } from '../fauna'
+import { q, ExprVal, faunadb } from '../fauna'
+import { FaunaIndex, FaunaIndexData } from '../types'
 
 const {
   Do,
@@ -10,6 +11,11 @@ const {
   Exists,
   Database,
   Delete,
+  Paginate,
+  Lambda,
+  Get,
+  Var,
+  Indexes,
   CreateDatabase,
   CreateCollection,
   CreateKey,
@@ -130,4 +136,12 @@ export async function createIndex(
       values: indexValues,
     })
   )
+}
+
+export const listIndexes = async (): Promise<FaunaIndex[]> => {
+  const faunaClient = getFaunaClient()
+  const indexes: FaunaIndexData = await faunaClient.query(
+    faunadb.query.Map(Paginate(Indexes()), Lambda('index', Get(Var('index'))))
+  )
+  return indexes.data
 }
