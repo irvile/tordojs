@@ -9,7 +9,7 @@ describe('Collection Field Options Test', () => {
   const documentData = { bar: 'fake' }
 
   beforeAll(async () => {
-    await db.createTestConnection('collection-find-options-spec')
+    await db.createTestDatabase('collection-find-options-spec')
     await Foo.up()
   })
 
