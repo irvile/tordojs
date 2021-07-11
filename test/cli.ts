@@ -1,5 +1,5 @@
 import { BaseCollection, field } from '../src'
-import TordoCLI from '../src/commands'
+import { TordoCLI } from '../src'
 
 class HelloMigrator extends BaseCollection {
   @field()

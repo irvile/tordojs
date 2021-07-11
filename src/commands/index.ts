@@ -34,4 +34,4 @@ class TordoCLI {
   }
 }
 
-export default TordoCLI
+export { TordoCLI }
