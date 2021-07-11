@@ -21,11 +21,8 @@ class TordoCLI {
 
     const command = argv[2]
 
-    //verifyCommand(command)
-
     switch (command.toUpperCase()) {
       case 'LIST':
-        console.log('running list command')
         await listCommand.run()
         break
       case 'MIGRATION':
