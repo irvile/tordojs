@@ -32,20 +32,26 @@ export default class MigrateCommand {
   }
 
   async deleteOldIndexes(localCollections: TordoCollectionStatic[]) {
+    let hasDeleteOperation = false
     const cloudIndexes = await listIndexes()
 
     let localIndexes = new Array<string>()
     for (const TordoObject of localCollections) {
-      localIndexes = [...localIndexes, ...TordoObject.getIndexesMap().keys()]
+      for (const tordoIndexName of TordoObject.getIndexesMap().keys()) {
+        localIndexes.push(tordoIndexName)
+      }
     }
 
     for (const cloudIndex of cloudIndexes) {
-      const localIndex = localIndexes.find(localIndex => localIndex === cloudIndex.name)
+      const localIndex = localIndexes.find(localIndexName => localIndexName === cloudIndex.name)
       if (localIndex === undefined) {
         await deleteIndex(cloudIndex.name)
         this.logger.success('Deleted Index ' + cloudIndex.name)
+        hasDeleteOperation = true
       }
     }
+
+    return hasDeleteOperation
   }
 
   async migrateCollections(localCollections: TordoCollectionStatic[], cloudCollections: string[]) {
@@ -75,7 +81,7 @@ export default class MigrateCommand {
   }
 
   async migrateIndexes(localCollections: TordoCollectionStatic[], cloudIndexes: FaunaIndex[]) {
-    let hasMigrationToChange = false
+    let hasMigrationOperation = false
 
     const recreateIndex = new Map<any, any>()
 
@@ -87,12 +93,12 @@ export default class MigrateCommand {
         if (cloudIndex === undefined) {
           await TordoObject.createIndex(indexName, indexOptions)
           this.logger.success('Created Index ' + indexName)
-          hasMigrationToChange = true
+          hasMigrationOperation = true
         }
         if (cloudIndex !== undefined && !compareIndex(cloudIndex, indexOptions)) {
           await deleteIndex(cloudIndex.name)
           recreateIndex.set(indexName, [TordoObject, indexOptions])
-          hasMigrationToChange = true
+          hasMigrationOperation = true
         }
       }
     }
@@ -103,12 +109,12 @@ export default class MigrateCommand {
       this.logger.loading('Updating index ' + indexName)
       await this.waitingDatabaseCacheAndCreate(tordoObject, indexName, indexOptions)
       this.logger.success('Updated Index ' + indexName)
-      hasMigrationToChange = true
+      hasMigrationOperation = true
     }
 
-    await this.deleteOldIndexes(localCollections)
+    const hasDeleteOperation = await this.deleteOldIndexes(localCollections)
 
-    if (!hasMigrationToChange) {
+    if (!hasMigrationOperation && !hasDeleteOperation) {
       this.logger.success('No index to migrate.')
     }
   }
@@ -118,7 +124,11 @@ export default class MigrateCommand {
     const cloudCollections = await listCollections()
     const cloudIndexes = await listIndexes()
 
-    await this.migrateCollections(collections, cloudCollections)
-    await this.migrateIndexes(collections, cloudIndexes)
+    try {
+      await this.migrateCollections(collections, cloudCollections)
+      await this.migrateIndexes(collections, cloudIndexes)
+    } catch (error) {
+      this.logger.warn('Ooops, something went wrong!')
+    }
   }
 }

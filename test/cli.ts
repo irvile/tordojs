@@ -1,12 +1,14 @@
-import { BaseCollection, field } from '../src'
-import { TordoCLI } from '../src'
+import { BaseCollection, field, TordoCLI } from '../src'
 
-class HelloMigrator extends BaseCollection {
+class User extends BaseCollection {
   @field()
-  public message: string
+  name: string
+
+  @field({ isUnique: true })
+  email: string
 }
 
 const tordoCLI = new TordoCLI()
-tordoCLI.add(HelloMigrator)
+tordoCLI.add(User)
 
 tordoCLI.runCommand(process.argv)
