@@ -31,7 +31,9 @@ export default class MigrateCommand {
     }
   }
 
-  async deleteOldIndexes(localCollections: TordoCollectionStatic[], cloudIndexes: FaunaIndex[]) {
+  async deleteOldIndexes(localCollections: TordoCollectionStatic[]) {
+    const cloudIndexes = await listIndexes()
+
     let localIndexes = new Array<string>()
     for (const TordoObject of localCollections) {
       localIndexes = [...localIndexes, ...TordoObject.getIndexesMap().keys()]
@@ -51,7 +53,7 @@ export default class MigrateCommand {
     for (const TordoObject of localCollections) {
       if (!cloudCollections.includes(TordoObject.getCollectionName())) {
         await TordoObject.createCollection()
-        this.logger.success('Created ' + TordoObject.getCollectionName())
+        this.logger.success('Created Collection ' + TordoObject.getCollectionName())
         hasMigrationToChange = true
       }
     }
@@ -94,15 +96,17 @@ export default class MigrateCommand {
         }
       }
     }
+
     for (const [indexName, options] of recreateIndex.entries()) {
       const tordoObject = options[0]
       const indexOptions = options[1]
+      this.logger.loading('Updating index ' + indexName)
       await this.waitingDatabaseCacheAndCreate(tordoObject, indexName, indexOptions)
       this.logger.success('Updated Index ' + indexName)
       hasMigrationToChange = true
     }
 
-    await this.deleteOldIndexes(localCollections, cloudIndexes)
+    await this.deleteOldIndexes(localCollections)
 
     if (!hasMigrationToChange) {
       this.logger.success('No index to migrate.')
