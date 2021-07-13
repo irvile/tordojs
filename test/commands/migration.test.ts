@@ -9,6 +9,7 @@ describe('Migration Command Test', () => {
 
   beforeEach(async () => {
     await db.deleteCollection('User')
+    await db.deleteCollection('UserV2')
   })
 
   it('should show nothing to migrate', async () => {
@@ -35,7 +36,7 @@ describe('Migration Command Test', () => {
     await migrateCommand.run(tordoCLI.collections)
     let logs = migrateCommand.logger.rows
     expect(logs).toHaveLength(3)
-    expect(logs).toContain('Created User')
+    expect(logs).toContain('Created Collection User')
     expect(logs).toContain('Created Index User_by_name')
     expect(logs).toContain('Created Index User_all')
   })
@@ -52,7 +53,7 @@ describe('Migration Command Test', () => {
 
     let logs = migrateCommand.logger.rows
     expect(logs).toHaveLength(3)
-    expect(logs).toContain('Created UserV2')
+    expect(logs).toContain('Created Collection UserV2')
     expect(logs).toContain('Created Index UserV2_by_name')
     expect(logs).toContain('Created Index UserV2_all')
 
@@ -78,5 +79,45 @@ describe('Migration Command Test', () => {
     logs = migrateCommand.logger.rows
     expect(logs).toContain('No collection to migrate.')
     expect(logs).toContain('No index to migrate.')
+  }, 70000)
+
+  it('should remove index when remove field in collection model', async () => {
+    class User extends BaseCollection {
+      static collection = 'UserV3'
+      @field()
+      name: string
+
+      @field({ isUnique: true })
+      email: string
+
+      @field()
+      password: string
+    }
+
+    const migrateCommand = new MigrateCommand()
+    await migrateCommand.run([User])
+
+    let logs = migrateCommand.logger.rows
+    expect(logs).toHaveLength(6)
+
+    class UserV2 extends BaseCollection {
+      static collection = 'UserV3'
+      @field()
+      name: string
+
+      @field({ isUnique: true })
+      email: string
+    }
+
+    await migrateCommand.run([UserV2])
+    logs = migrateCommand.logger.rows
+    expect(logs).toHaveLength(4)
+
+    let indexes = await listIndexes()
+    expect(indexes).toHaveLength(4)
+
+    await migrateCommand.run([UserV2])
+    indexes = await listIndexes()
+    expect(indexes).toHaveLength(4)
   }, 70000)
 })
