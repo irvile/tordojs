@@ -187,7 +187,17 @@ export class BaseCollection {
       if (error.message === 'invalid argument') {
         throw new Error(`${this.name} not found with ID=${id}`)
       }
-      console.log(error)
+    }
+  }
+
+  public static async delete(id: string) {
+    const faunaClient = getFaunaClient()
+    try {
+      await faunaClient.query(q.Delete(q.Ref(q.Collection(this.getCollectionName()), id)))
+    } catch (error) {
+      if (error.message === 'invalid argument') {
+        throw new Error(`${this.name} not found with ID=${id}`)
+      }
     }
   }
 
