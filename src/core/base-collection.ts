@@ -170,6 +170,27 @@ export class BaseCollection {
     }
   }
 
+  public static async update<T extends BaseCollection>(
+    this: ObjectType<T>,
+    id: string,
+    properties: ObjectPropertiesOptional<T>
+  ): Promise<any> {
+    const collectionName = (<typeof BaseCollection>this).getCollectionName()
+    const faunaClient = getFaunaClient()
+
+    try {
+      const documentRef = await faunaClient.query(
+        q.Update(q.Ref(q.Collection(collectionName), id), { data: properties })
+      )
+      return documentRef
+    } catch (error) {
+      if (error.message === 'invalid argument') {
+        throw new Error(`${this.name} not found with ID=${id}`)
+      }
+      console.log(error)
+    }
+  }
+
   public static $addField(fieldName: string, options) {
     const collection = this.getCollectionName()
     const isUnique = options.isUnique
