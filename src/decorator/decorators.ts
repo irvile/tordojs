@@ -1,5 +1,6 @@
 type FieldDecoratorOption = {
-  isUnique: boolean
+  isUnique?: boolean
+  isDate?: boolean
 }
 const field = (options?: FieldDecoratorOption) => {
   return function decorateAsColumn(target, property) {
