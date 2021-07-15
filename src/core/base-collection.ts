@@ -28,10 +28,14 @@ export class BaseCollection {
     return this.indexes
   }
 
-  public static async create<T>(data: T) {
+  public static async create<T extends BaseCollection>(
+    this: ObjectType<T>,
+    properties: ObjectPropertiesOptional<T>
+  ): Promise<any> {
+    const collectionName = (<typeof BaseCollection>this).getCollectionName()
     const faunaClient = getFaunaClient()
     const documentRef = await faunaClient.query(
-      q.Create(q.Collection(this.getCollectionName()), { data: data })
+      q.Create(q.Collection(collectionName), { data: properties })
     )
     return documentRef
   }
