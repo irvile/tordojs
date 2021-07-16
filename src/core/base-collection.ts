@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { getFaunaClient } from '../core/tordo-functions'
 import { q, ExprArg } from '../fauna'
 import { IndexOptions, ObjectPropertiesOptional, ObjectType, TordoCollectionStatic } from '../types'
@@ -18,6 +19,8 @@ export class BaseCollection {
 
   public static uniqueFields: string[]
 
+  public static dateFields: string[]
+
   static indexes: any
 
   static getCollectionName() {
@@ -28,10 +31,27 @@ export class BaseCollection {
     return this.indexes
   }
 
-  public static async create<T>(data: T) {
+  public static async create<T extends BaseCollection>(
+    this: ObjectType<T>,
+    properties: ObjectPropertiesOptional<T>
+  ): Promise<any> {
+    const _this = <typeof BaseCollection>this
     const faunaClient = getFaunaClient()
+
+    if (_this.dateFields?.length > 0) {
+      const newObject = { ...properties }
+
+      Object.entries(properties).map(entry => {
+        if (_this.dateFields.includes(entry[0])) {
+          newObject[entry[0]] = DateTime.fromJSDate(entry[1] as Date).toISO()
+        }
+      })
+
+      properties = { ...newObject }
+    }
+
     const documentRef = await faunaClient.query(
-      q.Create(q.Collection(this.getCollectionName()), { data: data })
+      q.Create(q.Collection(_this.getCollectionName()), { data: properties })
     )
     return documentRef
   }
@@ -66,7 +86,7 @@ export class BaseCollection {
     }
 
     // create index for find all documents
-    indexesMap.set(this.getCollectionName() + '_all', {
+    indexesMap.set(`${this.getCollectionName()}_all`, {
       isUnique: false,
       terms: [],
       values: this.fields,
@@ -74,11 +94,21 @@ export class BaseCollection {
 
     // create index for contrainst unique fields
     if (this.uniqueFields?.length > 0) {
-      indexesMap.set(this.getCollectionName() + '_unique', {
+      indexesMap.set(`${this.getCollectionName()}_unique`, {
         isUnique: true,
         terms: this.uniqueFields,
         values: [],
       })
+    }
+
+    if (this.dateFields?.length > 0) {
+      this.dateFields.map(dateField =>
+        indexesMap.set(`${this.getCollectionName()}_byDate_${dateField}`, {
+          isUnique: false,
+          terms: [],
+          values: [dateField],
+        })
+      )
     }
 
     return indexesMap
@@ -144,12 +174,17 @@ export class BaseCollection {
     properties: ObjectPropertiesOptional<T>
   ): Promise<any> {
     const indexMatches: ExprArg[] = []
-    const indexes = (this as any).getIndexes()
+    const _this = <typeof BaseCollection>this
+    const indexes = _this.getIndexes()
 
     for (const indexField in indexes) {
       let searchValue = ''
       if (properties![indexField]) {
         searchValue = properties![indexField]
+      }
+
+      if (_this.dateFields?.length > 0 && _this.dateFields.includes(indexField)) {
+        searchValue = DateTime.fromJSDate(properties![indexField]).toISO()
       }
 
       indexMatches.push(q.Match(q.Index(indexes[indexField]), searchValue))
@@ -166,9 +201,63 @@ export class BaseCollection {
     }
   }
 
+  public static async update<T extends BaseCollection>(
+    this: ObjectType<T>,
+    id: string,
+    properties: ObjectPropertiesOptional<T>
+  ): Promise<any> {
+    const collectionName = (<typeof BaseCollection>this).getCollectionName()
+    const faunaClient = getFaunaClient()
+
+    try {
+      const documentRef = await faunaClient.query(
+        q.Update(q.Ref(q.Collection(collectionName), id), { data: properties })
+      )
+      return documentRef
+    } catch (error) {
+      if (error.message === 'invalid argument') {
+        throw new Error(`${this.name} not found with ID=${id}`)
+      }
+    }
+  }
+
+  public static async delete(id: string) {
+    const faunaClient = getFaunaClient()
+    try {
+      await faunaClient.query(q.Delete(q.Ref(q.Collection(this.getCollectionName()), id)))
+    } catch (error) {
+      if (error.message === 'invalid argument') {
+        throw new Error(`${this.name} not found with ID=${id}`)
+      }
+    }
+  }
+
+  public static async findBetweenDates(columnDate: string, start: string, end: string) {
+    try {
+      const faunaClient = getFaunaClient()
+      const docs: any = await faunaClient.query(
+        q.Map(
+          q.Paginate(
+            q.Range(
+              q.Match(q.Index(`${this.getCollectionName()}_byDate_${columnDate}`)),
+              start,
+              end
+            )
+          ),
+          q.Lambda([columnDate, 'ref'], q.Get(q.Var('ref')))
+        )
+      )
+      return docs
+    } catch (e) {
+      console.log(e)
+    }
+    return null
+  }
+
   public static $addField(fieldName: string, options) {
     const collection = this.getCollectionName()
     const isUnique = options.isUnique
+    const isDate = options.isDate
 
     if (this.fields === undefined) {
       this.fields = []
@@ -182,10 +271,18 @@ export class BaseCollection {
       this.uniqueFields = []
     }
 
+    if (this.dateFields === undefined) {
+      this.dateFields = []
+    }
+
     this.fields.push(fieldName)
 
     if (isUnique) {
       this.uniqueFields.push(fieldName)
+    }
+
+    if (isDate) {
+      this.dateFields.push(fieldName)
     }
 
     this.indexes[fieldName] = `${collection}_by_${fieldName}`
