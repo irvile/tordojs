@@ -232,7 +232,7 @@ export class BaseCollection {
     }
   }
 
-  public static async findBetweenDate(columnDate: string, start: string, end: string) {
+  public static async findBetweenDates(columnDate: string, start: string, end: string) {
     try {
       const faunaClient = getFaunaClient()
       const docs: any = await faunaClient.query(

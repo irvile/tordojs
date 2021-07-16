@@ -77,46 +77,5 @@ describe('Collection Create Test', () => {
 
     expect(timeline).toBeTruthy()
     expect(timeline.data).toHaveLength(1)
-
-    let timelinesByDates = await Timeline.findBetweenDate(
-      'date',
-      DateTime.fromObject({
-        year: 2021,
-        month: 6,
-        day: 16,
-        hour: 0,
-        minute: 0,
-      }).toISO(),
-      DateTime.fromObject({
-        year: 2021,
-        month: 6,
-        day: 16,
-        hour: 23,
-        minute: 59,
-      }).toISO()
-    )
-    expect(timelinesByDates).toBeTruthy()
-    expect(timelinesByDates.data).toHaveLength(1)
-
-    timelinesByDates = await Timeline.findBetweenDate(
-      'date',
-      DateTime.fromObject({
-        year: 2020,
-        month: 6,
-        day: 16,
-        hour: 0,
-        minute: 0,
-      }).toISO(),
-      DateTime.fromObject({
-        year: 2020,
-        month: 6,
-        day: 16,
-        hour: 23,
-        minute: 59,
-      }).toISO()
-    )
-
-    expect(timelinesByDates).toBeTruthy()
-    expect(timelinesByDates.data).toHaveLength(0)
   })
 })
