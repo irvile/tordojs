@@ -11,11 +11,7 @@ export default class MigrateCommand {
     return new Promise(r => setTimeout(r, ms))
   }
 
-  async waitingDatabaseCacheAndCreate(
-    tordoObject: TordoCollectionStatic,
-    indexName: string,
-    indexOptions: any
-  ) {
+  async waitingDatabaseCacheAndCreate(tordoObject: TordoCollectionStatic, indexName: string, indexOptions: any) {
     let waitingClearCache = true
 
     while (waitingClearCache) {
@@ -65,9 +61,7 @@ export default class MigrateCommand {
     }
 
     for (const cloudCollection of cloudCollections) {
-      const TordoObject = localCollections.find(
-        collection => collection.getCollectionName() === cloudCollection
-      )
+      const TordoObject = localCollections.find(collection => collection.getCollectionName() === cloudCollection)
       if (TordoObject === undefined) {
         await deleteCollection(cloudCollection)
         this.logger.success('Removed ' + cloudCollection)
@@ -128,6 +122,7 @@ export default class MigrateCommand {
       await this.migrateCollections(collections, cloudCollections)
       await this.migrateIndexes(collections, cloudIndexes)
     } catch (error) {
+      console.log(error)
       this.logger.warn('Ooops, something went wrong!')
     }
   }
