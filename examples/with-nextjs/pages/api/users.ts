@@ -23,34 +23,23 @@ async function createUser(country: string) {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req
 
-  switch (method) {
-    case 'POST':
-      try {
-        const { country } = req.body
-        const user = await createUser(country)
-        res.json(user)
-      } catch (error) {
-        throw new Error(
-          'Ooops! Something get wrong while connecting to the database'
-        )
-      }
-      break
-    case 'GET':
-      try {
-        const users = await User.findMany()
-        users.sort((a, b) => {
-          return b.ref.id - a.ref.id
-        })
-        res.json(users)
-      } catch (error) {
-        throw new Error(
-          'Ooops! Something get wrong while connecting to the database'
-        )
-      }
-      break
-    default:
-      res.setHeader('Allow', ['GET', 'PUT'])
-      res.status(405).end(`Method ${method} Not Allowed`)
+  if (method === 'POST') {
+    const { country } = req.body
+
+    const user = await createUser(country)
+
+    res.json(user)
+  } else if (method === 'GET') {
+    const users = await User.findMany()
+
+    users.sort((a, b) => {
+      return b.ref.id - a.ref.id
+    })
+
+    res.json(users)
+  } else {
+    res.setHeader('Allow', ['GET', 'PUT'])
+    res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 
