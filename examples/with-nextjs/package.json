@@ -30,7 +30,7 @@
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
     "react-query": "^3.19.0",
-    "tordojs": "^0.10.0"
+    "tordojs": "^0.10.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.14.5",

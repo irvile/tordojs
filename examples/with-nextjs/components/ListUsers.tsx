@@ -1,11 +1,16 @@
 import { useQuery } from 'react-query'
 import Image from 'next/image'
+import Spinner from './Spinner'
 
 export default function ListUsers() {
   const usersQuery = useQuery(['users'], async () => {
     const response = await fetch('api/users')
     return response.json()
   })
+
+  if (usersQuery.isLoading) {
+    return <Spinner></Spinner>
+  }
 
   return (
     <div className="p-10 bg-gray-50">

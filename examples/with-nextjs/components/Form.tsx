@@ -37,7 +37,7 @@ export default function Form() {
         <p className="text-gray-600">
           This app is deployed to vercel and connected to your Fauna database.
           The example project can be found{' '}
-          <Link href="https://github.com/irvile/tordojs/examples/with-nextjs">
+          <Link href="https://github.com/irvile/tordojs/tree/main/examples/with-nextjs">
             <a className="text-indigo-700">here.</a>
           </Link>
         </p>
