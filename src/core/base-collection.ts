@@ -50,17 +50,21 @@ export class BaseCollection {
       properties = { ...newObject }
     }
 
-    const documentRef = await faunaClient.query(
-      q.Create(q.Collection(_this.getCollectionName()), { data: properties })
-    )
+    const documentRef = await faunaClient.query(q.Create(q.Collection(_this.getCollectionName()), { data: properties }))
     return documentRef
   }
 
+  /**
+   *
+   * @returns all documents
+   *  Sort by newest to old documents
+   */
   public static async findMany() {
     const FQLStatement = q.Paginate(q.Match(q.Index(this.getCollectionName() + '_all')))
 
     const response: any = await this.runStatement(FQLStatement)
-    const categories = response.data.map((row: any[]) => {
+
+    const documents = response.data.map((row: any[]) => {
       const object = {}
       this.fields.map((fieldName, index) => {
         object[fieldName] = row[index]
@@ -69,7 +73,9 @@ export class BaseCollection {
       return object
     })
 
-    return categories
+    documents.sort((docLeft, docRight) => docRight.ref.id - docLeft.ref.id)
+
+    return documents
   }
 
   static getIndexesMap() {
@@ -237,13 +243,7 @@ export class BaseCollection {
       const faunaClient = getFaunaClient()
       const docs: any = await faunaClient.query(
         q.Map(
-          q.Paginate(
-            q.Range(
-              q.Match(q.Index(`${this.getCollectionName()}_byDate_${columnDate}`)),
-              start,
-              end
-            )
-          ),
+          q.Paginate(q.Range(q.Match(q.Index(`${this.getCollectionName()}_byDate_${columnDate}`)), start, end)),
           q.Lambda([columnDate, 'ref'], q.Get(q.Var('ref')))
         )
       )
