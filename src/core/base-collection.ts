@@ -1,7 +1,15 @@
 import { DateTime } from 'luxon'
 import { getFaunaClient } from '../core/tordo-functions'
 import { q, ExprArg } from '../fauna'
-import { IndexOptions, ObjectPropertiesOptional, ObjectType, TordoCollectionStatic } from '../types'
+import {
+  FaunaDocument,
+  FaunaRefObject,
+  IndexOptions,
+  ObjectPropertiesOptional,
+  ObjectType,
+  TordoCollectionStatic,
+} from '../types'
+import { formatter } from './formatter'
 import { createCollection, createIndex, deleteCollection } from './tordo-functions'
 
 function StaticImplements<T>() {
@@ -34,7 +42,7 @@ export class BaseCollection {
   public static async create<T extends BaseCollection>(
     this: ObjectType<T>,
     properties: ObjectPropertiesOptional<T>
-  ): Promise<any> {
+  ): Promise<ObjectPropertiesOptional<T> & FaunaRefObject> {
     const _this = <typeof BaseCollection>this
     const faunaClient = getFaunaClient()
 
@@ -50,8 +58,13 @@ export class BaseCollection {
       properties = { ...newObject }
     }
 
-    const documentRef = await faunaClient.query(q.Create(q.Collection(_this.getCollectionName()), { data: properties }))
-    return documentRef
+    const documentRef: FaunaDocument = await faunaClient.query(
+      q.Create(q.Collection(_this.getCollectionName()), { data: properties })
+    )
+
+    const obj = formatter(documentRef)
+
+    return obj
   }
 
   /**

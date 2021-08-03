@@ -42,7 +42,7 @@ describe('Collection Create Test', () => {
   })
 
   it('should create a document with ref field', async () => {
-    const account: any = await Account.create({ code: 'account code' })
+    const account = await Account.create({ code: 'account code' })
     const userData = { name: 'fake name', accountRef: account.ref }
     await User.create(userData)
 

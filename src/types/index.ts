@@ -75,6 +75,22 @@ export interface FaunaIndex {
   partitions: number
 }
 
+export interface FaunaRefObject {
+  ref: FaunaRef
+}
+
+export interface FaunaRef {
+  id: string
+  collection: {
+    id: string
+  }
+}
+
+export interface FaunaDocument {
+  ref: FaunaRef
+  data: Array<FaunaDocument> | FaunaDocument | Record<string, unknown>
+}
+
 export interface FaunaIndexData {
   data: Array<FaunaIndex>
 }

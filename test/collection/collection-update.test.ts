@@ -29,7 +29,6 @@ describe('Collection Update Test', () => {
     const userData = { name: 'fake name' }
     const userUpdateData = { name: 'Tony Stark' }
     const user = await User.create(userData)
-
     await User.update(user.ref.id, userUpdateData)
 
     const data = await User.findMany()
