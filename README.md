@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://tordojs.com">
-    <img src="./media/tordojs.png" height="96">
+    <img src="./media/tordojs.png" >
   </a>
   <p align="center">Let's build amazing things more quickly and with less code.</p>
 </p>
