@@ -113,7 +113,7 @@ FAUNADB_KEY=
 
 ## Documentation
 
-Visit [tordojs.com](https://tordojs.com/).
+For full documentation, visit [tordojs.com](https://tordojs.com/).
 
 ## Community
 
