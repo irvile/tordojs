@@ -24,7 +24,6 @@
     "**/__tests__/**/*",
     "**/dist/esm/*",
     "**/node_modules",
-    "stories",
     "examples"
   ]
 }
