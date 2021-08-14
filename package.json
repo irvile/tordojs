@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.ts .",
     "start": "yarn run watch",
     "prepare": "husky install && lerna run prepare --no-private",
+    "release": "shipjs prepare",
     "test": "jest",
     "test:types": "tsc --noEmit"
   },
