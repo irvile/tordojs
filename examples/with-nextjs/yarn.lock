@@ -4711,10 +4711,10 @@ toidentifier@1.0.0:
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
   integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
 
-tordojs@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/tordojs/-/tordojs-0.10.0.tgz#7584aab2c7b0d8b1e0f3d78328de545261e5c32a"
-  integrity sha512-pAMO1miosJYbonpf/VZqZ6jx1TuVDh2LkIWaEFAlIE1vuFWWmWVZylG9rldl2yyxcO42xSf2kADN/zNhwnLbPw==
+tordojs@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/tordojs/-/tordojs-0.10.1.tgz#c6485eed6c5a8a7053cea7065c590aad3ece3877"
+  integrity sha512-vxryReRSwrYDhdyWsyIztAlzgj0PLOMcHxgeVVs2dktLDSBzLB6G9A/r/toYyK+HnNgbQdQ8fFjq8avrmZmzpg==
   dependencies:
     dotenv "^10.0.0"
     faunadb "^4.3.0"
