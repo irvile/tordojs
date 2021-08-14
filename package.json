@@ -8,6 +8,9 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "bin": {
+    "tordo": "./dist/cli/cli.js"
+  },
   "files": [
     "dist",
     "src"
@@ -22,12 +25,13 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build",
+    "build": "tsdx build ",
+    "build:cli": "esbuild src/cli.ts --bundle --platform=node --minify --sourcemap=external --outfile=dist/cli/cli.js",
     "test": "tsdx test",
     "test:watch": "tsdx test --watchAll",
     "test-cli": "TS_NODE_PROJECT='./tsconfig.cli.json' ts-node ./test/cli.ts",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "prepare": "tsdx build && yarn build:cli",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
@@ -62,6 +66,7 @@
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.12.0",
     "@types/luxon": "^1.27.1",
+    "esbuild": "^0.12.20",
     "husky": "^6.0.0",
     "size-limit": "^4.12.0",
     "ts-node": "^10.1.0",
@@ -70,9 +75,11 @@
     "typescript": "^4.3.4"
   },
   "dependencies": {
+    "commander": "^8.1.0",
     "dotenv": "^10.0.0",
     "faunadb": "^4.3.0",
     "luxon": "^2.0.1",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "ts-import": "^2.0.39"
   }
 }
