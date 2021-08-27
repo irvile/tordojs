@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable unicorn/prefer-module */
-const wrapWarningWithDevelopmentCheck = require('./scripts/babel/wrap-warning-with-dev-check');
+const wrapWarningWithDevelopmentCheck = require('./scripts/babel/wrap-warning-with-dev-check')
 
 module.exports = (api) => {
-  const isTest = api.env('test');
-  const modules = isTest ? 'commonjs' : false;
-  const targets = {};
+  const isTest = api.env('test')
+  const modules = isTest ? 'commonjs' : false
+  const targets = {}
 
   if (isTest) {
-    targets.node = true;
+    targets.node = true
   }
 
   return {
@@ -23,6 +23,7 @@ module.exports = (api) => {
       ],
     ],
     plugins: clean([
+      ['@babel/plugin-proposal-decorators', { legacy: true }],
       '@babel/plugin-proposal-nullish-coalescing-operator',
       wrapWarningWithDevelopmentCheck,
       [
@@ -39,9 +40,9 @@ module.exports = (api) => {
         },
       ],
     ]),
-  };
-};
+  }
+}
 
 function clean(config) {
-  return config.filter(Boolean);
+  return config.filter(Boolean)
 }

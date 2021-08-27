@@ -1,19 +1,20 @@
-import json from '@rollup/plugin-json';
-import resolve from '@rollup/plugin-node-resolve';
-import replace from '@rollup/plugin-replace';
-import babel from 'rollup-plugin-babel';
-import filesize from 'rollup-plugin-filesize';
-import { terser } from 'rollup-plugin-terser';
+import json from '@rollup/plugin-json'
+import commonJS from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import replace from '@rollup/plugin-replace'
+import babel from 'rollup-plugin-babel'
+import filesize from 'rollup-plugin-filesize'
+import { terser } from 'rollup-plugin-terser'
 
-const BUILD_MODES = new Set(['development', 'production']);
-const extensions = ['.js', '.ts', '.json'];
+const BUILD_MODES = new Set(['development', 'production'])
+const extensions = ['.js', '.ts', '.json']
 
 function createRollupConfig({ mode, format, input, pkg, config }) {
   if (!BUILD_MODES.has(mode)) {
-    throw new Error(`The Rollup configuration ${JSON.stringify(mode)} mode is not supported.`);
+    throw new Error(`The Rollup configuration ${JSON.stringify(mode)} mode is not supported.`)
   }
 
-  const bundles = [];
+  const bundles = []
 
   if (format === 'cjs') {
     bundles.push({
@@ -48,7 +49,7 @@ function createRollupConfig({ mode, format, input, pkg, config }) {
         }),
         ...(config.plugins || []),
       ].filter(Boolean),
-    });
+    })
   }
 
   bundles.push({
@@ -80,6 +81,7 @@ function createRollupConfig({ mode, format, input, pkg, config }) {
         extensions,
         rootMode: 'upward',
       }),
+      commonJS(),
       mode === 'production' && terser(),
       filesize({
         showMinifiedSize: false,
@@ -87,9 +89,9 @@ function createRollupConfig({ mode, format, input, pkg, config }) {
       }),
       ...(config.plugins || []),
     ].filter(Boolean),
-  });
+  })
 
-  return bundles;
+  return bundles
 }
 
 export function createRollupConfigs({ pkg, inputs = ['index'], config = {} }) {
@@ -98,11 +100,11 @@ export function createRollupConfigs({ pkg, inputs = ['index'], config = {} }) {
     onwarn(warning, warn) {
       //console.debug('warning', warning);
       if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules/luxon')) {
-        return;
+        return
       }
-      warn(warning);
+      warn(warning)
     },
-  };
+  }
   return inputs
     .map((input) => {
       return [
@@ -134,7 +136,7 @@ export function createRollupConfigs({ pkg, inputs = ['index'], config = {} }) {
           pkg,
           config,
         }),
-      ];
+      ]
     })
-    .flat(2);
+    .flat(2)
 }

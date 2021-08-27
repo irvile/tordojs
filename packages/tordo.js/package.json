@@ -33,6 +33,8 @@
     "build": "yarn build:clean && yarn build:umd:cjs && yarn build:esm && yarn build:types"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
+    "faunadb": "^4.3.0",
     "luxon": "^2.0.2"
   },
   "devDependencies": {
