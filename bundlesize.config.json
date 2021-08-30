@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "packages/tordo.js/dist/umd/index.production.js",
+      "maxSize": "5 KB"
+    }
+  ]
+}

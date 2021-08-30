@@ -1,0 +1,43 @@
+{
+  "name": "tordo.js",
+  "version": "0.2.0",
+  "author": "irvile",
+  "homepage": "https://github.com/irvile/tordojs#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/irvile/tordojsjs.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "Fauna",
+    "serverless",
+    "database"
+  ],
+  "main": "dist/cjs/index.js",
+  "umd:main": "dist/umd/index.production.js",
+  "jsdelivr": "dist/umd/index.production.js",
+  "unpkg": "dist/umd/index.production.js",
+  "module": "dist/esm/index.js",
+  "source": "src/index.ts",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "watch": "watch 'yarn on:change' --ignoreDirectoryPattern '/dist/'",
+    "on:change": "concurrently 'yarn build:esm' 'yarn build:types'",
+    "build:clean": "rimraf ./dist && rimraf ./build",
+    "build:esm": "babel src --root-mode upward --extensions '.ts' --out-dir dist/esm --ignore '**/*/__tests__/'",
+    "build:types": "tsc -p ./tsconfig.declaration.json --outDir ./dist/esm",
+    "build:umd:cjs": "rollup --config",
+    "build": "yarn build:clean && yarn build:umd:cjs && yarn build:esm && yarn build:types"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "faunadb": "^4.4.0",
+    "luxon": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/luxon": "^2.0.1"
+  }
+}
