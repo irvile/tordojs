@@ -20,6 +20,7 @@
     "publish-stable": "lerna version --force-publish",
     "format": "prettier --write .",
     "lint": "eslint --ext .js,.ts .",
+    "lerna": "lerna",
     "test": "jest",
     "test:size": "bundlesize"
   },
