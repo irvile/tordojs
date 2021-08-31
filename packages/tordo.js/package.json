@@ -41,10 +41,8 @@
   "dependencies": {
     "dotenv": "^10.0.0",
     "faunadb": "4.4.0",
-    "luxon": "^2.0.2"
-  },
-  "peerDependencies": {
-    "faunadb": "4.4.0"
+    "luxon": "^2.0.2",
+    "ora": "^5.4.1"
   },
   "devDependencies": {
     "@types/luxon": "^2.0.1"
