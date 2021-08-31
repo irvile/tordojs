@@ -13,29 +13,38 @@
     "serverless",
     "database"
   ],
-  "main": "dist/cjs/index.js",
-  "umd:main": "dist/umd/index.production.js",
-  "jsdelivr": "dist/umd/index.production.js",
-  "unpkg": "dist/umd/index.production.js",
-  "module": "dist/esm/index.js",
   "source": "src/index.ts",
-  "types": "dist/esm/index.d.ts",
+  "main": "./dist/tordojs.js",
+  "browser": "./dist/tordojs.umd.js",
+  "umd:main": "./dist/tordojs.umd.js",
+  "jsnext:main": "./dist/tordojs.modern.js",
+  "module": "./dist/tordojs.module.js",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/tordojs.module.js",
+      "umd": "./dist/tordojs.umd.js",
+      "require": "./dist/tordojs.js",
+      "import": "./dist/tordojs.modern.js",
+      "default": "./dist/tordojs.modern.js"
+    }
+  },
   "files": [
     "dist/"
   ],
   "scripts": {
-    "watch": "watch 'yarn on:change' --ignoreDirectoryPattern '/dist/'",
-    "on:change": "concurrently 'yarn build:esm' 'yarn build:types'",
-    "build:clean": "rimraf ./dist && rimraf ./build",
-    "build:esm": "babel src --root-mode upward --extensions '.ts' --out-dir dist/esm --ignore '**/*/__tests__/'",
-    "build:types": "tsc -p ./tsconfig.declaration.json --outDir ./dist/esm",
-    "build:umd:cjs": "rollup --config",
-    "build": "yarn build:clean && yarn build:umd:cjs && yarn build:esm && yarn build:types"
+    "watch": "watch 'yarn build' --ignoreDirectoryPattern '/dist/'",
+    "build:clean": "rimraf ./dist",
+    "build": "yarn build:clean && microbundle"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
-    "faunadb": "^4.4.0",
+    "faunadb": "4.4.0",
     "luxon": "^2.0.2"
+  },
+  "peerDependencies": {
+    "faunadb": "4.4.0"
   },
   "devDependencies": {
     "@types/luxon": "^2.0.1"

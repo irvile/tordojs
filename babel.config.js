@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable unicorn/prefer-module */
-const wrapWarningWithDevelopmentCheck = require('./scripts/babel/wrap-warning-with-dev-check')
-
+// eslint-disable-next-line unicorn/prefer-module
 module.exports = (api) => {
   const isTest = api.env('test')
   const modules = isTest ? 'commonjs' : false
@@ -25,7 +22,6 @@ module.exports = (api) => {
     plugins: clean([
       ['@babel/plugin-proposal-decorators', { legacy: true }],
       '@babel/plugin-proposal-nullish-coalescing-operator',
-      wrapWarningWithDevelopmentCheck,
       [
         'inline-replace-variables',
         {
