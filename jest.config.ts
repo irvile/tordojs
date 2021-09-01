@@ -14,4 +14,4 @@ export default {
     '^@tordo.js/(.*)$': '<rootDir>/packages/$1/src/',
     '^tordo.js$': '<rootDir>/packages/tordo.js/src/',
   },
-};
+}
