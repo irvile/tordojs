@@ -16,13 +16,13 @@ We're building features to help developers to create awesome database using [Fau
 #### With yarn
 
 ```sh
-yarn add tordojs
+yarn add tordo.js
 ```
 
 #### With NPM
 
 ```sh
-npm install tordojs
+npm install tordo.js
 ```
 
 ## Getting Started
@@ -30,7 +30,7 @@ npm install tordojs
 At first, you need to create your collections
 
 ```js
-import { BaseCollection, field } from 'tordojs'
+import { BaseCollection, field } from 'tordo.js'
 
 export class User extends BaseCollection {
   @field()
@@ -44,7 +44,7 @@ export class User extends BaseCollection {
 After that, we need create new file `tordo/config.ts` to put our collection and allow use commands to migrate or see the database state, for example.
 
 ```js
-import { TordoCLI } from 'tordojs'
+import { TordoCLI } from 'tordo.js'
 import { User } from 'collections/User'
 
 /**
